@@ -7,7 +7,7 @@ make
 if [ -f channel01.avi ]; then
 	rm channel01.avi
 fi
-ffmpeg -f image2 -r 2 -i images/clip-%06d.png -b 100k -vcodec libx264 channel01.mp4
+ffmpeg -f image2 -r 5 -i images/clip-%06d.png channel01.mp4
 
 ./create_clip "Channel 2" "ff0202"
 if [ -f channel02.avi ]; then

@@ -130,7 +130,7 @@ class treeMap
 		~treeMap();
 	
 		void move_next();
-		void saveToFile(QString filename);
+		void saveToFile(QString filename, int i);
 		QString Caption;
 		bool m_bLived1;
 		bool m_bLived2;
@@ -211,7 +211,7 @@ void treeMap::move_next()
 
 // ---------------------------------------------------------------------------
 
-void treeMap::saveToFile(QString filename)
+void treeMap::saveToFile(QString filename, int i)
 {
 	if(root1 == NULL)
 		root1 = new forkMap(double(randInt(m_nWidth/5, 4*m_nWidth/5)),double(randInt(m_nHeight/5, 4*m_nHeight/5)), 10);
@@ -252,8 +252,24 @@ void treeMap::saveToFile(QString filename)
 		QRect rect2((outputImage.width() - rectText.width())/2 - 30, (outputImage.height() - rectText.height()-20)/2, rectText.width() + 30, rectText.height() + 20);
 		p.drawRect(rect2);
 		p.drawText(rect2, Qt::AlignCenter, Caption);
-		p.end();
 	}
+	
+	{
+		// draw frame number
+		QFontMetrics fontMetrics(QFont(m_strFontname, m_nSizeFont));
+		QString number = QString::number(i);
+ 		QRect rectText = fontMetrics.boundingRect(number);
+ 		
+ 		QBrush brush( Qt::black, Qt::SolidPattern);
+ 		p.setBrush(brush);
+		p.setPen(QPen(Qt::white));
+		p.setFont(QFont(m_strFontname, m_nSizeFont));
+		
+		QRect rect2(outputImage.width() - rectText.width() - 30, outputImage.height() - rectText.height() - 12, rectText.width() + 30, rectText.height() + 20);
+		p.drawRect(rect2);
+		p.drawText(rect2, Qt::AlignCenter, number);
+	}
+	p.end();
 
 	outputImage.save(filename);		
 };
@@ -288,7 +304,9 @@ int main(int argc, char *argv[])
 	treeMap tree(nWidth, nHeight );
 	
 	tree.Caption = caption;
-	int countclips = 2*60 * 2;
+	int framerate = 5;
+	int seconds = 2*60;
+	int countclips = seconds * framerate;
 	
 	//max_count
 	for(int i=0; i<countclips; i++)
@@ -300,7 +318,7 @@ int main(int argc, char *argv[])
 		while(number.count() < 6)
 			number = "0" + number;
 				
-		tree.saveToFile("images/clip-"+number+".png");
+		tree.saveToFile("images/clip-"+number+".png", i);
 		tree.move_next();
 		
 		// std::cout << "\t" << max_count << "; Lived: " << (g_bLived ? "true" : "false" ) << "\n";
