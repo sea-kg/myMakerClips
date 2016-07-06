@@ -151,7 +151,7 @@ class treeMap
 treeMap::treeMap(int w, int h) 
   : m_nWidth(w), m_nHeight(h), root1(NULL), root2(NULL)
 {
-	m_nSizeFont = 13;
+	m_nSizeFont = 25;
 	m_strFontname = "Monospace";
 	// m_strFontname = "Arial";
 	
@@ -288,7 +288,7 @@ int main(int argc, char *argv[])
 	treeMap tree(nWidth, nHeight );
 	
 	tree.Caption = caption;
-	int countclips = 2*60 * 30;
+	int countclips = 2*60 * 2;
 	
 	//max_count
 	for(int i=0; i<countclips; i++)
