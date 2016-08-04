@@ -16,9 +16,6 @@
 
 // #include "seakgObjects2D.h"
 
-int g_nWidth = 320;
-int g_nHeight = 240;
-
 int g_nBG_Color = 0x7175b0;
 
 // ---------------------------------------------------------------------------
@@ -34,20 +31,22 @@ int randInt(int low, int high)
 class forkMap
 {
 	public: 
-		forkMap(double x, double y, double w);
+		forkMap(double x, double y, double w, int nWidth, int nHeight);
 		double x, y, w;
 		int move_next(bool bLived);
 		void print(QPainter &p);
-		
+		int m_nWidth;
+		int m_nHeight;
 		QList<forkMap *> childs;
 };
 
 // ---------------------------------------------------------------------------
 
-forkMap::forkMap(double x, double y, double w) 
+forkMap::forkMap(double x, double y, double w, int nWidth, int nHeight) 
   : x(x), y(y), w(w) 
 {
-
+	m_nWidth = nWidth;
+	m_nHeight = nHeight;
 };
 
 // ---------------------------------------------------------------------------
@@ -81,10 +80,10 @@ int forkMap::move_next(bool bLived)
 		newX = x + k_X1 * w + k_X2 * newChildW;
 		newY = y + k_Y1 * w + k_Y2 * newChildW;
 		
-		if(newX < 0 || newX > g_nWidth || newY < 0 || newY > g_nHeight) return max_count;
+		if(newX < 0 || newX > m_nWidth || newY < 0 || newY > m_nHeight) return max_count;
 		
 		// std::cout << "\t" << k_X1 << "; " << k_X2 << "; " << k_Y1 << "; " << k_Y2 << "; \n";
-		childs.push_back(new forkMap(newX, newY, newChildW));
+		childs.push_back(new forkMap(newX, newY, newChildW, m_nWidth, m_nHeight));
 		max_count++; // new child
 	}
 	else
@@ -176,10 +175,10 @@ treeMap::~treeMap()
 void treeMap::move_next()
 {
 	if(root1 == NULL)
-		root1 = new forkMap(double(randInt(m_nWidth/5, 4*m_nWidth/5)),double(randInt(m_nHeight/5, 4*m_nHeight/5)), 10);
+		root1 = new forkMap(double(randInt(m_nWidth/5, 4*m_nWidth/5)),double(randInt(m_nHeight/5, 4*m_nHeight/5)), 10, m_nWidth, m_nHeight);
 		
 	if(root2 == NULL)
-		root2 = new forkMap(double(randInt(m_nWidth/5, 4*m_nWidth/5)),double(randInt(m_nHeight/5, 4*m_nHeight/5)), 10);
+		root2 = new forkMap(double(randInt(m_nWidth/5, 4*m_nWidth/5)),double(randInt(m_nHeight/5, 4*m_nHeight/5)), 10, m_nWidth, m_nHeight);
 		
 	// generic algorithm
 	int max_count1 = root1->move_next(m_bLived1);
@@ -214,10 +213,10 @@ void treeMap::move_next()
 void treeMap::saveToFile(QString filename, int i)
 {
 	if(root1 == NULL)
-		root1 = new forkMap(double(randInt(m_nWidth/5, 4*m_nWidth/5)),double(randInt(m_nHeight/5, 4*m_nHeight/5)), 10);
+		root1 = new forkMap(double(randInt(m_nWidth/5, 4*m_nWidth/5)),double(randInt(m_nHeight/5, 4*m_nHeight/5)), 10, m_nWidth, m_nHeight);
 		
 	if(root2 == NULL)
-		root2 = new forkMap(double(randInt(m_nWidth/5, 4*m_nWidth/5)),double(randInt(m_nHeight/5, 4*m_nHeight/5)), 10);
+		root2 = new forkMap(double(randInt(m_nWidth/5, 4*m_nWidth/5)),double(randInt(m_nHeight/5, 4*m_nHeight/5)), 10, m_nWidth, m_nHeight);
 		
 	QImage outputImage(m_nWidth, m_nHeight, QImage::Format_RGB32);
 
@@ -289,7 +288,7 @@ int main(int argc, char *argv[])
 			g_nBG_Color = QString(argv[i]).toInt(Q_NULLPTR, 16);
 		}
 	}
-	
+
 	// Create seed for the random
 	// That is needed only once on application startup
 	QTime time = QTime::currentTime();
@@ -302,7 +301,7 @@ int main(int argc, char *argv[])
 		dir.mkdir("images");
 
 	treeMap tree(nWidth, nHeight );
-	
+
 	tree.Caption = caption;
 	int framerate = 5;
 	int seconds = 2*60;
